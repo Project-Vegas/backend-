@@ -69,6 +69,32 @@ def single_item(request, product_id):
         item.delete() 
         return JsonResponse({'message': 'Tutorial was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
     
+def updates(request):
+    FinalJson = {"updates": []}
+    with open('files/update.csv', 'r') as file:
+        file_reader = csv.reader(file)
+        count = 1
+        for row in file_reader:
+            if count == 1:
+                count = count + 1
+                continue
+            count = count + 1
+            l = {}
+            try:
+                if len(row)!=0:
+                    l["product_id"] = row[0]
+                    l["name"] = row[1]
+                    l["updated_at"] = row[2]
+                    l["qty_change"] = row[3]
+                    l["qty_available"] = row[4]
+                    l["old_price"] = row[5]
+                    l["new_price"] = row[6]
+                    l["updated_id"] = row[7]
+                    FinalJson["updates"].append(l)
+            except:
+                print('still error persists!!')
+    FinalJson["updates"].reverse()
+    return JsonResponse(FinalJson)
 
 def add_to_update_sheet(original_item, new_item):
     time = datetime.datetime.now()

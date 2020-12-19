@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '6enxa+hcot(*g6zmbs-%eu95r6u2#486t08!$gub1-qb4_&o$x'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = [*]
+ALLOWED_HOSTS = ['pal16sourav.pythonanywhere.com', '127.0.0.1'] 
 
 
 # Application definition
@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'items'
+    'rest_framework',
+    'items',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -119,3 +121,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8000',
+)
