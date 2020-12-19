@@ -28,6 +28,8 @@ def all_items(request):
         item_serializer = ItemSerializer(data=item_data)
         if item_serializer.is_valid():
             item_serializer.save()
+            added_item = Item.objects.get(product_id = item_data['product_id'])
+            add_to_update_sheet(added_item, added_item)
             return JsonResponse(item_serializer.data, status=status.HTTP_201_CREATED) 
         return JsonResponse(item_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -49,14 +51,37 @@ def single_item(request, product_id):
         return JsonResponse(item_serializer.data) 
  
     elif request.method == 'PUT':
+        
+        item_before_update = Item.objects.get(product_id = product_id)
 
         item_data = JSONParser().parse(request) 
         item_serializer = ItemSerializer(item, data=item_data) 
         if item_serializer.is_valid(): 
             item_serializer.save()
+
+            item_after_update = Item.objects.get(product_id = product_id)
+            add_to_update_sheet(item_before_update, item_after_update) 
+
             return JsonResponse(item_serializer.data) 
         return JsonResponse(item_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
  
     elif request.method == 'DELETE': 
         item.delete() 
         return JsonResponse({'message': 'Tutorial was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+    
+
+def add_to_update_sheet(original_item, new_item):
+    time = datetime.datetime.now()
+    product_id = original_item.product_id
+    name = original_item.name
+    old_price = original_item.price
+    new_price = new_item.price
+    qty_change = new_item.quantity - original_item.quantity
+    qty_available = new_item.quantity
+    updated_at = time.strftime("%H")+":"+time.strftime("%M")+" "+time.strftime("%x")
+    updated_by = 'will change to the user logged in'
+    updated_list = [product_id,name, updated_at, qty_change, qty_available,old_price, new_price, updated_by]
+
+    with open('files/update.csv', 'a', newline='') as file:
+        file_writer = csv.writer(file)
+        file_writer.writerow(updated_list)
