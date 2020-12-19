@@ -10,6 +10,9 @@ from items.models import Item
 from items.serializers import ItemSerializer
 from rest_framework.decorators import api_view
 
+import csv
+import datetime
+
 # Create your views here.
 
 @api_view(['GET', 'POST', 'DELETE'])
@@ -67,7 +70,7 @@ def single_item(request, product_id):
  
     elif request.method == 'DELETE': 
         item.delete() 
-        return JsonResponse({'message': 'Tutorial was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+        return JsonResponse({'message': 'Deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
     
 def updates(request):
     FinalJson = {"updates": []}
